@@ -1,0 +1,15 @@
+# Node.js
+node_modules/
+
+# Arquivos de Log
+logs/
+*.log
+
+# Arquivos temporários
+*.tmp
+
+# Arquivos de configuração
+.env
+
+# Dependências de desenvolvimento
+devDependencies/
