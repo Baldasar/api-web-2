@@ -15,8 +15,8 @@ mongoose.connection.on("connected", () => {
 
 const usersSchema = new mongoose.Schema({
   author_name: String,
-  author_email: String,
-  author_user: String,
+  author_email: { type: String, unique: true },
+  author_user: { type: String, unique: true },
   author_pwd: String,
   author_level: String,
   author_status: Boolean,
@@ -40,7 +40,11 @@ router.post("/", async (req, res) => {
     const newUser = await User.create(user);
     res.json({ message: "Usuário salvo com sucesso!", newUser });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    if (err.name === "MongoError" && err.code === 11000) {
+      res.status(400).json({ message: "E-mail ou usuário já em uso." });
+    } else {
+      res.status(400).json({ message: err.message });
+    }
   }
 });
 
