@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const fs = require("fs/promises");
 
 router.use(express.json());
 
@@ -80,5 +81,35 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: "Erro interno do servidor" });
   }
 });
+
+const populateArticlesFromJson = async () => {
+  try {
+    const jsonData = await fs.readFile("src/api/data/articles.json", "utf8");
+    const articlesData = JSON.parse(jsonData);
+
+    if (Array.isArray(articlesData) && articlesData.length > 0) {
+      await Article.insertMany(articlesData);
+      console.log("Base de artigos populada");
+    } else {
+      console.log("Nenhum Artigo encontrado no arquivo JSON");
+    }
+  } catch (err) {
+    console.error("Erro ao popular Artigos:", err.message);
+  }
+};
+
+const checkDatabase = async () => {
+  try {
+    const articlesCount = await Article.countDocuments();
+
+    if (articlesCount === 0) {
+      await populateArticlesFromJson();
+    }
+  } catch (err) {
+    console.error("Error checking database:", err.message);
+  }
+};
+
+checkDatabase();
 
 module.exports = router;
