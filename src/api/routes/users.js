@@ -50,8 +50,13 @@ router.post("/", async (req, res) => {
 
 router.put("/:pid", async (req, res) => {
   const pid = req.params.pid;
-  const newUser = req.body.user;
+  const newUser = req.body;
+
   try {
+    if (!newUser.author_name || !newUser.author_email || !newUser.author_pwd) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       pid,
       {
@@ -63,10 +68,15 @@ router.put("/:pid", async (req, res) => {
       },
       { new: true }
     );
-    res.json({ message: "Usuário alterado com sucesso!", updatedUser });
-    res.json(updatedUser);
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User updated successfully", updatedUser });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error(err.message);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
@@ -100,26 +110,8 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Senha incorreta" });
     }
 
-    res.status(200).json({ message: "Login bem-sucedido", user });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-router.post("/login", async (req, res) => {
-  const { author_user, author_pwd } = req.body;
-
-  try {
-    const user = await User.findOne({ author_user });
-
-    if (!user) {
-      return res.status(401).json({ message: "Usuário não encontrado" });
-    }
-
-    const isPasswordValid = await user.comparePassword(author_pwd);
-
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Senha incorreta" });
+    if (user.author_status !== true) {
+      return res.status(401).json({ message: "Usuário inativo" });
     }
 
     res.status(200).json({ message: "Login bem-sucedido", user });
