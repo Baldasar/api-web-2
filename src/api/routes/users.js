@@ -62,7 +62,6 @@ router.put("/:pid", async (req, res) => {
       {
         author_name: newUser.author_name,
         author_email: newUser.author_email,
-        author_pwd: newUser.author_pwd,
         author_level: newUser.author_level,
         author_status: newUser.author_status,
       },
@@ -136,14 +135,14 @@ const populateUsers = async () => {
   try {
     const initialUsers = [
       {
-        "author_name": "Administrador",
-        "author_email": "admin@me.com",
-        "author_user": "admin",
-        "author_pwd": "admin",
-        "author_level": "admin",
-        "author_status": true,
-        "author_create_date": "2023-11-25"
-      }
+        author_name: "Administrador",
+        author_email: "admin@me.com",
+        author_user: "admin",
+        author_pwd: "admin",
+        author_level: "admin",
+        author_status: true,
+        author_create_date: "2023-11-25",
+      },
     ];
 
     await User.insertMany(initialUsers);

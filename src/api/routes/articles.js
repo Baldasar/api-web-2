@@ -49,20 +49,34 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
-  const articleId = req.params.id;
-  const updatedArticle = req.body.article;
+router.put("/:pid", async (req, res) => {
+  const pid = req.params.pid;
+  const newArticle = req.body;
+
   try {
-    const result = await Article.findByIdAndUpdate(
-      articleId,
+    const updatedArticle = await Article.findByIdAndUpdate(
+      pid,
       {
-        $set: updatedArticle,
+        kb_title: newArticle.kb_title,
+        kb_body: newArticle.kb_body,
+        kb_permalink: newArticle.kb_permalink,
+        kb_keywords: newArticle.kb_keywords,
+        kb_published: newArticle.kb_published,
+        kb_suggestion: newArticle.kb_suggestion,
+        kb_featured: newArticle.kb_featured,
+        kb_author_email: newArticle.kb_author_email,
       },
       { new: true }
     );
-    res.json({ message: "Artigo atualizado com sucesso!", updatedArticle: result });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+
+    if (!updatedArticle) {
+      return res.status(404).json({ error: "Article not found." });
+    }
+
+    res.json(updatedArticle);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
