@@ -120,4 +120,39 @@ router.post("/login", async (req, res) => {
   }
 });
 
+const checkDatabase = async () => {
+  try {
+    const usersCount = await User.countDocuments();
+
+    if (usersCount === 0) {
+      await populateUsers();
+    }
+  } catch (err) {
+    console.error("Error ao checar baco de dados:", err.message);
+  }
+};
+
+const populateUsers = async () => {
+  try {
+    const initialUsers = [
+      {
+        "author_name": "Administrador",
+        "author_email": "admin@me.com",
+        "author_user": "admin",
+        "author_pwd": "admin",
+        "author_level": "admin",
+        "author_status": true,
+        "author_create_date": "2023-11-25"
+      }
+    ];
+
+    await User.insertMany(initialUsers);
+    console.log("Usuário Administrador criado");
+  } catch (err) {
+    console.error("Erro ao popular usuário:", err.message);
+  }
+};
+
+checkDatabase();
+
 module.exports = router;
