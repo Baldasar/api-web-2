@@ -1,0 +1,20 @@
+[
+  {
+    "author_name": "Administrador",
+    "author_email": "admin@me.com",
+    "author_user": "admin",
+    "author_pwd": "admin",
+    "author_level": "admin",
+    "author_status": true,
+    "author_create_date": "2023-11-25"
+  },
+  {
+    "author_name": "Usuário",
+    "author_email": "user@me.com",
+    "author_user": "user",
+    "author_pwd": "user",
+    "author_level": "default",
+    "author_status": true,
+    "author_create_date": "2023-11-25"
+  }
+]

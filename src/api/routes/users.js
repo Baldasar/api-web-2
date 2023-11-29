@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const fs = require("fs/promises");
 
 router.use(express.json());
 
@@ -133,22 +134,17 @@ const checkDatabase = async () => {
 
 const populateUsers = async () => {
   try {
-    const initialUsers = [
-      {
-        author_name: "Administrador",
-        author_email: "admin@me.com",
-        author_user: "admin",
-        author_pwd: "admin",
-        author_level: "admin",
-        author_status: true,
-        author_create_date: "2023-11-25",
-      },
-    ];
+    const jsonData = await fs.readFile("src/api/data/users.json", "utf8");
+    const usersData = JSON.parse(jsonData);
 
-    await User.insertMany(initialUsers);
-    console.log("Usuário Administrador criado");
+    if (Array.isArray(usersData) && usersData.length > 0) {
+      await User.insertMany(usersData);
+      console.log("Base de Usuários populada");
+    } else {
+      console.log("Nenhum Usuário encontrado no arquivo JSON");
+    }
   } catch (err) {
-    console.error("Erro ao popular usuário:", err.message);
+    console.error("Erro ao popular Usuário:", err.message);
   }
 };
 
