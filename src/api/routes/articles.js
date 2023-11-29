@@ -15,7 +15,6 @@ mongoose.connection.on("connected", () => {
 });
 
 const articlesSchema = new mongoose.Schema({
-  kb_id: String,
   kb_title: String,
   kb_body: String,
   kb_permalink: String,
@@ -46,6 +45,27 @@ router.post("/", async (req, res) => {
     res.json({ message: "Artigo salvo com sucesso!", newArticle });
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+});
+
+router.post("/:id/like", async (req, res) => {
+  const articleId = req.params.id;
+
+  try {
+    const article = await Article.findById(articleId);
+
+    if (!article) {
+      return res.status(404).json({ error: "Article not found." });
+    }
+
+    article.kb_liked_count = (article.kb_liked_count || 0) + 1;
+
+    const updatedArticle = await article.save();
+
+    res.json(updatedArticle);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
